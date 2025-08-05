@@ -1,0 +1,43 @@
+name: AutoMerge Pro
+description: AI-powered automated pull request reviews and merging with intelligent risk scoring
+author: AutoMerge Pro Team
+url: https://automerge-pro.com
+setup_url: https://automerge-pro.com/setup
+redirect_url: https://automerge-pro.com/auth/callback
+
+request_oauth_on_install: true
+setup_on_update: true
+
+default_permissions:
+  pull_requests: write
+  contents: read
+  metadata: read
+  repository_hooks: write
+  checks: read
+  statuses: read
+  issues: read
+  actions: read
+
+default_events:
+  - pull_request
+  - pull_request_review
+  - pull_request_review_comment
+  - check_suite
+  - check_run
+  - status
+  - push
+  - repository
+
+webhook:
+  active: true
+  events:
+    - pull_request
+    - pull_request_review
+    - pull_request_review_comment
+    - check_suite
+    - check_run
+    - status
+    - push
+    - repository
+
+public: true
