@@ -1,0 +1,265 @@
+// Prisma schema file
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Organization {
+  id              String   @id @default(cuid())
+  githubId        String   @unique
+  login           String
+  name            String?
+  avatarUrl       String?
+  billingEmail    String?
+  plan            Plan     @default(FREE)
+  subscriptionId  String?
+  trialEndsAt     DateTime?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  installations   Installation[]
+  users           OrganizationUser[]
+  rules           MergeRule[]
+  notifications   NotificationConfig[]
+
+  @@map("organizations")
+}
+
+model User {
+  id              String   @id @default(cuid())
+  githubId        String   @unique
+  login           String
+  name            String?
+  email           String?
+  avatarUrl       String?
+  accessToken     String?
+  refreshToken    String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  organizations   OrganizationUser[]
+  pullRequests    PullRequest[]
+
+  @@map("users")
+}
+
+model OrganizationUser {
+  id             String   @id @default(cuid())
+  organizationId String
+  userId         String
+  role           Role     @default(MEMBER)
+  createdAt      DateTime @default(now())
+
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([organizationId, userId])
+  @@map("organization_users")
+}
+
+model Installation {
+  id                String   @id @default(cuid())
+  githubId          String   @unique
+  organizationId    String
+  repositoryCount   Int      @default(0)
+  suspendedAt       DateTime?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  organization      Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  repositories      Repository[]
+
+  @@map("installations")
+}
+
+model Repository {
+  id             String   @id @default(cuid())
+  githubId       String   @unique
+  installationId String
+  name           String
+  fullName       String
+  private        Boolean  @default(false)
+  defaultBranch  String   @default("main")
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  installation   Installation  @relation(fields: [installationId], references: [id], onDelete: Cascade)
+  pullRequests   PullRequest[]
+  rules          MergeRule[]
+
+  @@map("repositories")
+}
+
+model MergeRule {
+  id             String    @id @default(cuid())
+  organizationId String
+  repositoryId   String?
+  name           String
+  description    String?
+  enabled        Boolean   @default(true)
+  priority       Int       @default(0)
+  conditions     Json      // Flexible JSON for various rule conditions
+  actions        Json      // Actions to take when conditions are met
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  repository     Repository?  @relation(fields: [repositoryId], references: [id], onDelete: Cascade)
+
+  @@map("merge_rules")
+}
+
+model PullRequest {
+  id               String          @id @default(cuid())
+  githubId         String          @unique
+  repositoryId     String
+  number           Int
+  title            String
+  body             String?
+  state            PRState         @default(OPEN)
+  authorId         String
+  baseBranch       String
+  headBranch       String
+  mergeable        Boolean?
+  riskScore        Float?
+  aiAnalysis       Json?
+  autoMergeEnabled Boolean         @default(false)
+  mergedAt         DateTime?
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
+
+  repository       Repository      @relation(fields: [repositoryId], references: [id], onDelete: Cascade)
+  author           User            @relation(fields: [authorId], references: [id])
+  reviews          PRReview[]
+  checks           PRCheck[]
+  activities       PRActivity[]
+
+  @@unique([repositoryId, number])
+  @@map("pull_requests")
+}
+
+model PRReview {
+  id             String      @id @default(cuid())
+  pullRequestId  String
+  githubId       String      @unique
+  reviewerId     String
+  state          ReviewState
+  body           String?
+  submittedAt    DateTime
+  createdAt      DateTime    @default(now())
+
+  pullRequest    PullRequest @relation(fields: [pullRequestId], references: [id], onDelete: Cascade)
+
+  @@map("pr_reviews")
+}
+
+model PRCheck {
+  id             String      @id @default(cuid())
+  pullRequestId  String
+  githubId       String      @unique
+  name           String
+  conclusion     CheckState?
+  status         String
+  detailsUrl     String?
+  completedAt    DateTime?
+  createdAt      DateTime    @default(now())
+
+  pullRequest    PullRequest @relation(fields: [pullRequestId], references: [id], onDelete: Cascade)
+
+  @@map("pr_checks")
+}
+
+model PRActivity {
+  id             String        @id @default(cuid())
+  pullRequestId  String
+  type           ActivityType
+  description    String
+  metadata       Json?
+  createdAt      DateTime      @default(now())
+
+  pullRequest    PullRequest   @relation(fields: [pullRequestId], references: [id], onDelete: Cascade)
+
+  @@map("pr_activities")
+}
+
+model NotificationConfig {
+  id             String   @id @default(cuid())
+  organizationId String
+  type           NotificationType
+  enabled        Boolean  @default(true)
+  config         Json     // Slack webhook URL, email addresses, etc.
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@map("notification_configs")
+}
+
+model WebhookEvent {
+  id         String   @id @default(cuid())
+  githubId   String   @unique
+  event      String
+  payload    Json
+  processed  Boolean  @default(false)
+  error      String?
+  createdAt  DateTime @default(now())
+  processedAt DateTime?
+
+  @@map("webhook_events")
+}
+
+enum Plan {
+  FREE
+  TEAM
+  GROWTH
+  ENTERPRISE
+}
+
+enum Role {
+  OWNER
+  ADMIN
+  MEMBER
+}
+
+enum PRState {
+  OPEN
+  CLOSED
+  MERGED
+}
+
+enum ReviewState {
+  APPROVED
+  CHANGES_REQUESTED
+  COMMENTED
+}
+
+enum CheckState {
+  SUCCESS
+  FAILURE
+  NEUTRAL
+  CANCELLED
+  TIMED_OUT
+  ACTION_REQUIRED
+}
+
+enum ActivityType {
+  CREATED
+  REVIEWED
+  MERGED
+  CLOSED
+  AI_ANALYZED
+  AUTO_APPROVED
+  RULE_APPLIED
+  NOTIFICATION_SENT
+}
+
+enum NotificationType {
+  SLACK
+  EMAIL
+  WEBHOOK
+}
