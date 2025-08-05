@@ -253,7 +253,7 @@ async function checkAutoMerge(pr: any, octokit: Octokit) {
     where: { pullRequestId: pr.id }
   });
 
-  const allChecksPass = checks.every(check => 
+  const allChecksPass = checks.every((check: any) => 
     check.conclusion === 'SUCCESS' || check.conclusion === 'NEUTRAL'
   );
 

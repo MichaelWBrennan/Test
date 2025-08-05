@@ -3,10 +3,8 @@ import cors from '@fastify/cors';
 import helmet from '@fastify/helmet';
 import jwt from '@fastify/jwt';
 import rateLimit from '@fastify/rate-limit';
+import cookie from '@fastify/cookie';
 import { PrismaClient } from '@prisma/client';
-import { createBullBoard } from '@bull-board/api';
-import { BullMQAdapter } from '@bull-board/api/bullMQAdapter';
-import { FastifyAdapter } from '@bull-board/fastify';
 import Redis from 'ioredis';
 
 import { githubRoutes } from './routes/github';
@@ -18,6 +16,17 @@ import { notificationRoutes } from './routes/notifications';
 import { setupQueues } from './services/queue';
 import { config } from './config';
 
+// Type augmentation for Fastify
+declare module 'fastify' {
+  interface FastifyRequest {
+    prisma: PrismaClient;
+    redis: Redis;
+  }
+  interface FastifyInstance {
+    authenticate: (request: any, reply: any) => Promise<void>;
+  }
+}
+
 const prisma = new PrismaClient();
 const redis = new Redis(config.redis.url);
 
@@ -25,7 +34,9 @@ async function buildApp() {
   const app = Fastify({
     logger: {
       level: config.app.logLevel,
-      prettyPrint: config.app.env === 'development'
+      transport: config.app.env === 'development' ? {
+        target: 'pino-pretty'
+      } : undefined
     }
   });
 
@@ -38,6 +49,8 @@ async function buildApp() {
     origin: config.app.corsOrigins,
     credentials: true
   });
+
+  await app.register(cookie);
 
   await app.register(rateLimit, {
     max: 100,
@@ -62,20 +75,20 @@ async function buildApp() {
     request.redis = redis;
   });
 
+  // Authentication decorator
+  app.decorate('authenticate', async function(request: any, reply: any) {
+    try {
+      await request.jwtVerify();
+    } catch (err) {
+      reply.status(401).send({ error: 'Unauthorized' });
+    }
+  });
+
   // Setup job queues
   const queues = setupQueues(redis);
   
-  // Bull Board for queue monitoring
-  const serverAdapter = new FastifyAdapter();
-  createBullBoard({
-    queues: Object.values(queues).map(queue => new BullMQAdapter(queue)),
-    serverAdapter
-  });
-  serverAdapter.setBasePath('/admin/queues');
-  await app.register(serverAdapter.registerPlugin(), {
-    prefix: '/admin/queues',
-    basePath: '/'
-  });
+  // Store queues in app context for route access
+  app.decorate('queues', queues);
 
   // Health check
   app.get('/health', async () => {

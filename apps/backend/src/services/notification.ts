@@ -6,7 +6,7 @@ class NotificationService {
 
   constructor() {
     if (config.notifications.smtpHost) {
-      this.transporter = nodemailer.createTransporter({
+      this.transporter = nodemailer.createTransport({
         host: config.notifications.smtpHost,
         port: config.notifications.smtpPort || 587,
         secure: false,

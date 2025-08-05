@@ -157,7 +157,8 @@ async function handlePullRequestEvent(payload: any, request: FastifyRequest) {
   }
 
   // Add to processing queue
-  const queues = (fastify as any).queues;
+  const app = request.server as any;
+  const queues = app.queues;
   if (queues?.prQueue) {
     await queues.prQueue.add('process-pr', {
       pullRequestId: pr.id,
@@ -204,7 +205,8 @@ async function handlePullRequestReviewEvent(payload: any, request: FastifyReques
 
   // Trigger auto-merge check if approved
   if (review.state === 'approved') {
-    const queues = (fastify as any).queues;
+    const app = request.server as any;
+    const queues = app.queues;
     if (queues?.prQueue) {
       await queues.prQueue.add('process-pr', {
         pullRequestId: pr.id,
