@@ -1,151 +1,321 @@
-# WealthLoop
+# AutoMerge Pro
 
-A Flutter app for automated savings, investments, and financial wellness.
+🚀 **AI-Powered GitHub Marketplace App for Automated Pull Request Reviews and Merging**
 
-## Overview
+AutoMerge Pro intelligently automates your GitHub pull request workflow using advanced AI risk scoring and customizable rules. Save hours of manual review time while maintaining code quality and security.
 
-WealthLoop helps users automate their savings through round-up transactions, make micro-investments, and achieve their financial goals through gamification and social features.
+[![GitHub Marketplace](https://img.shields.io/badge/GitHub%20Marketplace-AutoMerge%20Pro-blue)](https://github.com/marketplace/automerge-pro)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![CI/CD](https://github.com/MichaelWBrennan/Test/workflows/CI%2FCD%20Pipeline/badge.svg)](https://github.com/MichaelWBrennan/Test/actions)
 
-## Features
+## ✨ Features
 
-- **Onboarding & Registration**: Easy signup with email or social providers
-- **Dashboard**: Overview of savings, investments, and financial insights
-- **Automated Savings**: Round-up spare change from transactions
-- **Micro-Investments**: Automated investment of saved amounts
-- **Referral System**: Earn rewards by inviting friends
-- **Premium Features**: Advanced analytics and personal coaching
-- **Profile & Settings**: User preferences and account management
+### 🤖 AI-Powered Risk Analysis
+- **GPT-4 Integration**: Advanced code analysis using OpenAI's latest models
+- **Security Detection**: Identifies potential vulnerabilities and security risks
+- **Breaking Change Analysis**: Detects API changes and compatibility issues
+- **Code Quality Assessment**: Evaluates complexity, maintainability, and best practices
 
-## Getting Started
+### ⚙️ Intelligent Automation Rules
+- **File Pattern Matching**: Auto-approve changes to documentation, tests, or specific directories
+- **Author-Based Rules**: Trust certain team members for automatic approvals
+- **Branch Protection**: Different rules for main, develop, and feature branches
+- **Risk Score Thresholds**: Customize automation based on AI-calculated risk levels
+
+### 📊 Comprehensive Dashboard
+- **Real-time Analytics**: Track merge times, risk scores, and team productivity
+- **Rule Management**: Easy-to-use interface for creating and managing automation rules
+- **Pull Request Insights**: Detailed analysis and recommendations for each PR
+- **Team Collaboration**: Shared configurations and organizational settings
+
+### 🔔 Smart Notifications
+- **Slack Integration**: Real-time notifications for high-risk PRs and automation events
+- **Email Alerts**: Configurable email notifications for critical changes
+- **Custom Webhooks**: Integrate with your existing tooling and workflows
+
+## 🚀 Quick Start
+
+### 1. Install the GitHub App
+
+[![Add to GitHub](https://img.shields.io/badge/Add%20to%20GitHub-AutoMerge%20Pro-brightgreen)](https://github.com/apps/automerge-pro)
+
+Click the button above or visit our [GitHub Marketplace listing](https://github.com/marketplace/automerge-pro) to install AutoMerge Pro on your repositories.
+
+### 2. Configure Your Rules
+
+1. Visit the [AutoMerge Pro Dashboard](https://automerge-pro.com/dashboard)
+2. Select your organization and repositories
+3. Create your first automation rule:
+   ```yaml
+   # Example: Auto-approve documentation updates
+   name: "Documentation Updates"
+   conditions:
+     filePatterns: ["*.md", "docs/**"]
+     maxRiskScore: 0.2
+   actions:
+     autoApprove: true
+     autoMerge: true
+   ```
+
+### 3. Watch the Magic Happen
+
+AutoMerge Pro will now automatically:
+- ✅ Analyze every pull request with AI
+- ⚡ Apply your custom rules
+- 🔄 Auto-approve and merge safe changes
+- 📱 Notify you about risky PRs
+
+## 📋 Pricing
+
+| Plan | Price | Repositories | Features |
+|------|-------|--------------|----------|
+| **Free** | $0/month | 3 repos | Basic AI analysis, Standard rules |
+| **Team** | $99/month | 10 repos | Advanced AI, Slack notifications, Analytics |
+| **Growth** | $299/month | Unlimited | Premium AI models, Custom integrations |
+| **Enterprise** | $999/month | Unlimited | SSO, SLA, On-premise options |
+
+[View detailed pricing →](https://automerge-pro.com/pricing)
+
+## 🏗️ Architecture
+
+AutoMerge Pro is built with a modern, scalable architecture:
+
+```
+┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
+│   Next.js App  │    │  Node.js API    │    │   PostgreSQL    │
+│  (Frontend)     │◄──►│   (Backend)     │◄──►│   Database      │
+└─────────────────┘    └─────────────────┘    └─────────────────┘
+                               │
+                       ┌───────▼───────┐
+                       │ Redis + BullMQ │
+                       │ Queue System   │
+                       └───────┬───────┘
+                               │
+                    ┌──────────▼──────────┐
+                    │    GitHub API       │
+                    │  + OpenAI GPT-4     │
+                    └─────────────────────┘
+```
+
+### Tech Stack
+
+**Frontend:**
+- ⚛️ Next.js 14 with App Router
+- 🎨 Tailwind CSS + Radix UI
+- 📊 Real-time dashboards with SWR
+
+**Backend:**
+- 🚀 Fastify.js for high-performance APIs
+- 🗄️ PostgreSQL with Prisma ORM
+- 🔄 Redis + BullMQ for job processing
+- 🤖 OpenAI GPT-4 integration
+
+**Infrastructure:**
+- 🌐 Vercel (Frontend deployment)
+- ☁️ Render (Backend deployment)
+- 🔄 GitHub Actions (CI/CD)
+- 📈 Comprehensive monitoring and logging
+
+## 🛠️ Development Setup
 
 ### Prerequisites
 
-- Flutter SDK (3.0.0 or higher)
-- Dart SDK (3.0.0 or higher)
-- Android Studio / VS Code with Flutter extensions
-- iOS development setup (for iOS deployment)
+- Node.js 18+ and npm 9+
+- PostgreSQL 13+
+- Redis 6+
+- GitHub App credentials
+- OpenAI API key
 
-### Installation
+### Local Development
 
-1. Clone the repository:
-```bash
-git clone https://github.com/MichaelWBrennan/Test.git
-cd Test
-```
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/MichaelWBrennan/Test.git
+   cd Test
+   ```
 
-2. Install dependencies:
-```bash
-flutter pub get
-```
+2. **Install dependencies:**
+   ```bash
+   npm install
+   ```
 
-3. Run the app:
-```bash
-flutter run
-```
+3. **Set up environment variables:**
+   ```bash
+   # Backend
+   cp apps/backend/.env.example apps/backend/.env
+   
+   # Frontend
+   cp apps/frontend/.env.example apps/frontend/.env
+   ```
+
+4. **Start the database:**
+   ```bash
+   # Using Docker (recommended)
+   docker-compose up -d postgres redis
+   
+   # Or install locally
+   brew install postgresql redis
+   brew services start postgresql redis
+   ```
+
+5. **Run database migrations:**
+   ```bash
+   npm run db:migrate
+   ```
+
+6. **Start the development servers:**
+   ```bash
+   # All services
+   npm run dev
+   
+   # Or individually
+   npm run dev --workspace=apps/backend
+   npm run dev --workspace=apps/frontend
+   npm run dev --workspace=marketing-site
+   ```
+
+7. **Visit the application:**
+   - Frontend: http://localhost:3000
+   - Backend API: http://localhost:3001
+   - Marketing Site: http://localhost:3002
 
 ### Project Structure
 
 ```
-lib/
-├── main.dart                 # App entry point
-├── app.dart                  # Main app widget and routing
-├── screens/                  # All screen widgets
-│   ├── onboarding_screen.dart
-│   ├── dashboard_screen.dart
-│   ├── savings_screen.dart
-│   ├── investments_screen.dart
-│   ├── referral_screen.dart
-│   ├── premium_screen.dart
-│   └── profile_screen.dart
-├── widgets/                  # Reusable widgets
-└── core/                     # Core functionality and utilities
-
-assets/
-├── images/                   # Image assets
-└── icons/                    # Icon assets
+automerge-pro/
+├── apps/
+│   ├── backend/          # Fastify API server
+│   │   ├── src/
+│   │   │   ├── routes/   # API routes
+│   │   │   ├── services/ # Business logic
+│   │   │   └── utils/    # Utilities
+│   │   └── prisma/       # Database schema
+│   ├── frontend/         # Next.js dashboard
+│   │   ├── src/app/      # App router pages
+│   │   └── components/   # React components
+│   └── marketing-site/   # Marketing website
+├── packages/
+│   └── shared/           # Shared types and utilities
+├── docs/                 # Documentation
+└── .github/workflows/    # CI/CD pipelines
 ```
 
-## Development
+## 🔧 Configuration
 
-### Building for Production
+### GitHub App Setup
 
-**Android:**
+1. Create a new GitHub App in your organization settings
+2. Configure webhook URL: `https://your-domain.com/api/webhooks/github`
+3. Set required permissions:
+   - Pull requests: Read & Write
+   - Contents: Read
+   - Metadata: Read
+   - Repository webhooks: Write
+
+### Automation Rules
+
+Create sophisticated rules using our flexible JSON schema:
+
+```json
+{
+  "name": "Auto-approve trusted authors",
+  "conditions": {
+    "authorPatterns": ["dependabot[bot]", "@core-team/*"],
+    "filePatterns": ["package*.json", "*.lock"],
+    "maxRiskScore": 0.3
+  },
+  "actions": {
+    "autoApprove": true,
+    "autoMerge": false,
+    "requireReviews": 1,
+    "notify": true
+  }
+}
+```
+
+### AI Risk Scoring
+
+Our AI analyzes multiple factors:
+- 🔒 **Security**: Vulnerabilities, auth changes, sensitive data
+- 💥 **Breaking Changes**: API modifications, dependency updates
+- 🧩 **Complexity**: Code complexity, file changes, test coverage
+- 📋 **Quality**: Code style, documentation, best practices
+
+## 📖 API Reference
+
+### Webhook Events
+
+AutoMerge Pro listens for these GitHub webhook events:
+
+- `pull_request` - PR opened, updated, closed
+- `pull_request_review` - PR reviewed, approved
+- `check_suite` - CI/CD status updates
+- `installation` - App installed/uninstalled
+
+### REST API Endpoints
+
 ```bash
-flutter build apk --release
+# Get organization rules
+GET /api/rules/org/:orgId
+
+# Create new rule
+POST /api/rules/org/:orgId
+
+# Get pull request analysis
+GET /api/github/repositories/:repoId/pull-requests/:prNumber
+
+# Update notification settings
+POST /api/notifications/org/:orgId
 ```
 
-**iOS:**
-```bash
-flutter build ios --release
-```
+## 🔒 Security
 
-### Running Tests
+AutoMerge Pro takes security seriously:
 
-```bash
-flutter test
-```
+- 🔐 **Secure Authentication**: JWT tokens with secure HTTP-only cookies
+- 🛡️ **CSRF Protection**: Built-in CSRF token validation
+- ⚡ **Rate Limiting**: API rate limiting to prevent abuse
+- 🔑 **Minimal Permissions**: Request only necessary GitHub permissions
+- 🔒 **Data Encryption**: All data encrypted in transit and at rest
 
-### Code Formatting
+## 📚 Documentation
 
-```bash
-flutter format .
-```
+- [📖 User Guide](docs/user-guide.md)
+- [🔧 API Reference](docs/api-reference.md)
+- [🚀 Deployment Guide](docs/deployment.md)
+- [🤝 Contributing Guide](docs/contributing.md)
 
-### Static Analysis
+## 🤝 Contributing
 
-```bash
-flutter analyze
-```
-
-## Next Steps
-
-This scaffold provides the foundational structure for the WealthLoop app. Here are the recommended next steps for development:
-
-### Immediate Tasks
-1. **Backend Integration**: Connect to financial APIs and user management systems
-2. **Authentication**: Implement proper user authentication and authorization
-3. **Data Models**: Create data models for users, transactions, investments, etc.
-4. **State Management**: Implement proper state management (Provider, Riverpod, or Bloc)
-5. **Local Storage**: Add persistent storage for user preferences and offline data
-
-### Core Features
-1. **Bank Integration**: Implement Plaid or similar for bank account linking
-2. **Transaction Processing**: Real-time transaction monitoring and round-up calculations
-3. **Investment Platform**: Integration with investment APIs (Alpaca, Interactive Brokers, etc.)
-4. **Push Notifications**: User engagement and milestone notifications
-5. **Analytics**: User behavior tracking and financial insights
-
-### UI/UX Enhancements
-1. **Custom Theme**: Implement comprehensive brand theming
-2. **Animations**: Add smooth transitions and micro-interactions
-3. **Charts**: Implement interactive financial charts and graphs
-4. **Accessibility**: Ensure full accessibility compliance
-5. **Responsive Design**: Optimize for different screen sizes
-
-### Testing & Quality
-1. **Unit Tests**: Add comprehensive unit tests for business logic
-2. **Widget Tests**: Test UI components and user interactions
-3. **Integration Tests**: End-to-end testing of critical user flows
-4. **Performance Optimization**: Optimize for smooth 60fps performance
-
-### Deployment
-1. **CI/CD Pipeline**: Automated testing and deployment
-2. **App Store Setup**: Prepare for iOS App Store and Google Play Store
-3. **Beta Testing**: Implement TestFlight and Play Console beta testing
-4. **Analytics Integration**: Firebase Analytics, Crashlytics, etc.
-
-## Contributing
+We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) for details.
 
 1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add some amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
+2. Create a feature branch: `git checkout -b feature/amazing-feature`
+3. Commit your changes: `git commit -m 'Add amazing feature'`
+4. Push to the branch: `git push origin feature/amazing-feature`
 5. Open a Pull Request
 
-## License
+## 📄 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## Support
+## 🆘 Support
 
-For support and questions, please open an issue in the GitHub repository or contact the development team.
+- 📧 **Email**: support@automerge-pro.com
+- 💬 **Discord**: [Join our community](https://discord.gg/automerge-pro)
+- 🐛 **Issues**: [GitHub Issues](https://github.com/MichaelWBrennan/Test/issues)
+- 📖 **Docs**: [Documentation](https://docs.automerge-pro.com)
+
+---
+
+<div align="center">
+  <p>
+    <strong>Built with ❤️ by the AutoMerge Pro team</strong>
+  </p>
+  <p>
+    <a href="https://automerge-pro.com">Website</a> •
+    <a href="https://github.com/marketplace/automerge-pro">GitHub Marketplace</a> •
+    <a href="https://docs.automerge-pro.com">Documentation</a> •
+    <a href="https://status.automerge-pro.com">Status</a>
+  </p>
+</div>
