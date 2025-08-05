@@ -1,0 +1,31 @@
+# Render deployment configuration for backend
+# This file is used by Render.com for automatic deployments
+
+services:
+  - type: web
+    name: automerge-pro-backend
+    env: node
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        fromDatabase:
+          name: automerge-pro-db
+          property: connectionString
+      - key: REDIS_URL
+        fromService:
+          type: redis
+          name: automerge-pro-redis
+          property: connectionString
+    healthCheckPath: /health
+    
+  - type: redis
+    name: automerge-pro-redis
+    plan: starter
+    
+  - type: postgresql
+    name: automerge-pro-db
+    plan: starter
+    databaseName: automerge_pro
